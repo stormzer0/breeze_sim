@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Breeze Revenue Simulator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body {
+        background-color: #fcb4cf;
+        font-family: 'Arial', sans-serif;
+        text-align: center;
+        padding: 2rem;
+      }
+      .card {
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        max-width: 600px;
+        margin: 0 auto;
+        box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+      }
+      input {
+        padding: 0.5rem;
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+        width: 100%;
+        border-radius: 0.5rem;
+        border: 1px solid #ccc;
+      }
+      canvas {
+        margin-top: 2rem;
+      }
+      h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+      }
+      .tagline {
+        margin-top: 0.5rem;
+        font-size: 1.2rem;
+        color: #444;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>breeze</h1>
+      <div class="tagline">Finance Made Breezy 💸🌴</div>
+      <p><strong>Assets on Platform ($):</strong></p>
+      <input id="assetsInput" type="number" value="100000000" />
+      <p><strong>Yield %:</strong></p>
+      <input id="yieldInput" type="number" value="7" />
+      <canvas id="revenueChart" width="400" height="200"></canvas>
+    </div>
+
+    <script>
+      const ctx = document.getElementById('revenueChart').getContext('2d');
+
+      const revenueChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Partner', 'Breeze'],
+          datasets: [{
+            label: 'Revenue ($)',
+            data: [0, 0],
+            backgroundColor: ['#d4f842', '#6be5f8'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return '$' + value.toLocaleString();
+                }
+              }
+            }
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return '$' + context.parsed.y.toLocaleString();
+                }
+              }
+            }
+          }
+        }
+      });
+
+      function updateChart() {
+        const assets = parseFloat(document.getElementById('assetsInput').value);
+        const yieldPct = parseFloat(document.getElementById('yieldInput').value);
+
+        const totalYield = (assets * yieldPct) / 100;
+        const breeze = totalYield * 0.15;
+        const partner = totalYield * 0.85;
+
+        revenueChart.data.datasets[0].data = [partner, breeze];
+        revenueChart.update();
+      }
+
+      document.getElementById('assetsInput').addEventListener('input', updateChart);
+      document.getElementById('yieldInput').addEventListener('input', updateChart);
+
+      updateChart();
+    </script>
+  </body>
+</html>
